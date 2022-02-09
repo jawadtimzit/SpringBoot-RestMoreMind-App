@@ -2,8 +2,11 @@ package com.example.demo.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.query.Procedure;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.example.demo.model.Address;
 import com.example.demo.model.Treehouse;
 import java.util.List;
 
@@ -11,14 +14,13 @@ import java.util.List;
 
 @Repository
 public interface TreeRepository extends JpaRepository<Treehouse, Long> {
-	// find by treehouseID
-//	List<Treehouse> findById(int TreehouseID);
+    
+	@Query(nativeQuery = true,value = "SELECT distinct e.price from Treehouse e")
+	public List<Object> getPrices();
 	
-
-	// lets create a method where we can find tree houses that are in a specific city
+	@Query(nativeQuery = true,value = "SELECT distinct e.size from Treehouse e")
+	public List<Object> getSizes();
 	
-//	// sorted by size when entering name
-//    @Query("from Treehouse where name =?1 order by size")
-//    List<Treehouse> findByNameSorted(String name);
-//    
+	@Query(value = "CALL uspGetFilteredTreehouses(:Size,:Price,:CityName);", nativeQuery = true)
+	public List<Treehouse> getFilteredTreehouses(@Param("Size") Integer  Size,@Param("Price") Integer  Price,@Param("CityName") String CityName);
 }
